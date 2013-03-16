@@ -1,0 +1,33 @@
+include "std/felix/pkgtool";
+include "XML2/xml2";
+open XML2_;
+open PkgTool;
+
+var xml_doc3 = xml_new_doc("1.0");
+var root_node = xml_new_node( "html");
+xml_doc_set_root_element(xml_doc3,root_node);
+
+val e1 = xml_new_child(root_node, Null[xml_ns_ptr],  "body","");
+assert_true(not isNull[xml_node_ptr](e1),"xml_new_child");
+
+val e2 = xml_new_text_child(e1, Null[xml_ns_ptr],  "div","Hello World");
+assert_true(not isNull[xml_node_ptr](e2),"xml_new_text_child");
+
+xml_replace_node_p(e1,xml_new_text_child(e1, Null[xml_ns_ptr],  "span","hello world"));
+var txt_replace_node = xml_doc_dump(xml_doc3);
+var succ_txt_replace_node = """<?xml version="1.0"?>
+<html><span>hello world</span></html>
+""";
+assert_true(txt_replace_node == succ_txt_replace_node,"xml_replace_node");
+var pnode:xml_node_ptr;
+var xml_str = """<hr/><div>I am an inserted node</div>""";
+val ret = xml_parse_in_node_context(root_node,xml_str,XML_PARSE_RECOVER,pnode);
+assert_true( ret == 0, "xml_parse_in_node_content");
+if ret == 0 do
+  val nn = xml_add_child(root_node,pnode);
+  assert_true(not isNull[xml_node_ptr](nn),"xml_add_child");
+else
+  warning("skipped xml_add_child because xml_parse_in_node_content");
+done
+
+xml_free_doc(xml_doc3);

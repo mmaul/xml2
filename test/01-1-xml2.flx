@@ -1,0 +1,24 @@
+include "std/felix/pkgtool";
+include "XML2/xml2";
+open XML2_;
+open PkgTool;
+val xml_string = """<notes>
+  <note id="note1">
+	<to>Tove</to>
+	<from>Jani</from>
+	<heading>Reminder</heading>
+	<body id="note1_body">Don't forget me this weekend!</body>
+  </note>
+   <note id="note2">
+	<to>Becca</to>
+	<from>Mike</from>
+	<heading>Reminder</heading>
+	<body id="note2_body">Your awesome!</body>
+  </note>
+</notes>
+""";
+var xml_doc2 = xml_parse_string(xml_string); // parse string
+assert_true(("<?xml version=\"1.0\"?>\n"+xml_string) == xml_doc_dump(xml_doc2),
+  "xml_parse_string");
+xml_free_doc(xml_doc2);
+

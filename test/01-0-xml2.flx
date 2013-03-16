@@ -1,0 +1,28 @@
+include "std/felix/pkgtool";
+include "XML2/xml2";
+open XML2_;
+open PkgTool;
+
+var data_path=Env::getenv "TEST_DATA_DIR";
+val in_doc1  = data_path+"/test1.xhtml";
+
+//println("----------Test xml2-1-0-----------------");
+test_title("xml_parse_file");
+var xml_doc1 = xml_parse_file("test".join(in_doc1)); // parse file
+var infh = fopen_input("test".join(in_doc1));
+var plain_text = load(infh);
+fclose(infh);
+var xml_text1 = xml_doc_dump(xml_doc1);
+test_result(not xml_text1 == "");
+var plines = split(plain_text,"\n");
+var xlines = split(xml_text1,"\n");
+//$ Compare the third line of each file. Docdump rewrites the top 2 lines
+//$ But third on should match plain text
+assert_true( len(plines) > size(4) and len(xlines) > size(4) and (let Cons(_,Cons(_,Cons(?a,_))) = plines in a) == (let Cons(_,Cons(_,Cons(?b,_))) = xlines in b),"xml_doc_dump");
+
+/* Use this if you want to write to a file*/
+val out_doc1 = "test".join("test_out1.xhtml");
+val result1 = xml_doc_dump(out_doc1,xml_doc1);
+assert_true(result1 > 0,"xml_doc_dump to file");
+xml_free_doc(xml_doc1);
+imply("xml_free_doc");

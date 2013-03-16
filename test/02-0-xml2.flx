@@ -1,0 +1,42 @@
+include "std/felix/pkgtool";
+include "XML2/xml2";
+open XML2_;
+open PkgTool;
+
+val xml_string = """<notes id="notes_list">
+  <note id="note1">
+	<to>Tove</to>
+	<from>Jani</from>
+	<heading>Reminder</heading>
+	<body id="note1_body">Don't forget me this weekend!</body>
+  </note>
+   <note id="note2">
+	<to>Becca</to>
+	<from>Mike</from>
+	<heading>Reminder</heading>
+	<body id="note2_body">Your awesome!</body>
+  </note>
+</notes>
+""";
+
+var xml_doc2 = xml_parse_string(xml_string);
+var root_node2 = xml_doc_get_root_element(xml_doc2);
+val nc2 = xml_new_text_child(root_node2, Null[xml_ns_ptr],  "node1","Another node");
+assert_true(not isNull[xml_node_ptr](nc2),"xml_new_text_child");
+
+assert_true(
+  match xml_get_prop(root_node2,"id") with
+    |Some ?v => v == "notes_list"
+    |_       => false
+  endmatch,
+  "xml_get_prop");
+// Set element attribute programatically
+val attr = xml_set_prop(root_node2,"priority","high");
+assert_true( not isNull[xml_attr_ptr](attr) and 
+  match xml_get_prop(root_node2,"priority") with
+    |Some ?v => v == "high"
+    |_       => false
+  endmatch,
+  "xml_set_prop");
+xml_free_doc(xml_doc2);
+

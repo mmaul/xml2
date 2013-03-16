@@ -1,0 +1,32 @@
+include "std/felix/pkgtool";
+include "XML2/xml2";
+open XML2_;
+open PkgTool;
+
+var xml_doc4 = xml_new_doc("1.0");
+var dtd2 = xml_new_html_dtd(xml_doc4);
+var dtd_node:xml_node_ptr;
+xml_doc_set_root_element(xml_doc4, xml_node_ptr_of_xml_dtd_ptr(dtd2));
+
+var root_node4 = xml_new_node( "html");
+var r42 = xml_add_child(xml_node_ptr_of_xml_doc_ptr(xml_doc4),root_node4);
+if isNull[xml_node_ptr](r42) do
+    test_title("Setting node e41");test_result(false);
+done
+val e41 = xml_new_child(root_node4, Null[xml_ns_ptr],  "body","");
+if isNull[xml_node_ptr](e41) do
+  test_title("Setting node e41");test_result(false);
+done
+
+val e42 = xml_new_text_child(e41, Null[xml_ns_ptr],  "div","Hello World");
+if isNull[xml_node_ptr](e42) do
+  test_title("Setting node e42");test_result(false);
+done
+
+var tst = xml_doc_dump(xml_doc4);
+var succ = """<?xml version="1.0"?>
+<!DOCTYPE HTML>
+<html><body><div>Hello World</div></body></html>
+""";
+assert_true(tst == succ,"document construction w/dtd");
+xml_free_doc(xml_doc4);

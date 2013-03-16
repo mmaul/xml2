@@ -1,0 +1,4 @@
+include "XML2/xml2";
+include "XML2/dom";
+include "web/decorators";
+include "web/templates";
